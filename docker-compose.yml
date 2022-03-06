@@ -1,0 +1,23 @@
+version: '3.9'
+networks:
+    dockernetwork:
+      external: true
+services:  
+  app:
+    image: urlcontainer:v1
+    container_name: urlcontainer
+    build: .
+    networks:
+      - dockernetwork
+    volumes:
+      - ./data:/app/data
+    ports:
+      - 5000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.urlcontainer.rule=Host(`2me.nu`)"
+      - "traefik.http.routers.urlcontainer.entrypoints=https"
+      - "traefik.http.routers.urlcontainer.tls=true"
+      - "traefik.http.routers.urlcontainer.tls.certresolver=letsencrypt"
+      - "traefik.http.services.urlcontainer.loadbalancer.server.port=5000"
+      - "org.label-schema.group=monitoring"
